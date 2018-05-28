@@ -23,5 +23,9 @@ print(aemet_url)
 print(headers)
 
 r = requests.get(aemet_url, headers=headers)
-
 response = json.loads(r.text)
+
+print(response['datos'])
+
+r2 = requests.get(response['datos'])
+print(r2.json())
