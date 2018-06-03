@@ -13,19 +13,18 @@ def load_env_values():
 
 env = load_env_values()
 
-aemet_url = 'https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/07040'
+aemet_url = 'https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/{}'.format(env['LOCATION'])
 headers = {
   'cache-control': "no-cache",
   'api_key': env['API-KEY'],
 }
 
-print(aemet_url)
-print(headers)
+r = requests.get(aemet_url, headers=headers).json()
+r2 = requests.get(r['datos']).json()[0]
 
-r = requests.get(aemet_url, headers=headers)
-response = json.loads(r.text)
+city = r2['nombre']
+state = r2['provincia']
+current_prediction = r2['prediccion']['dia'][0]
 
-print(response['datos'])
-
-r2 = requests.get(response['datos'])
-print(r2.json())
+print("El tiempo de {} - {}".format(city, state))
+print(r2['prediccion']['dia'][0].keys())
