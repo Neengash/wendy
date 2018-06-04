@@ -25,15 +25,9 @@ r2 = requests.get(r['datos']).json()[0]
 city = r2['nombre']
 state = r2['provincia']
 current_prediction = r2['prediccion']['dia'][0]
-orto = current_prediction['orto']
-ocaso = current_prediction['ocaso']
-dia = current_prediction['fecha']
-print("Dia {} el sol sale a las {} y se pone a las {} en {}, {}".format(dia, orto, ocaso, city, state))
-
-precipitacion = current_prediction['precipitacion']
-temp = current_prediction['temperatura']
-sens_termica = current_prediction['sensTermica']
-sky = current_prediction['estadoCielo']
+sun_up = current_prediction['orto']
+sun_down = current_prediction['ocaso']
+date = current_prediction['fecha']
 
 filtered_data = {i:{} for i in range(0, 24)}
 
@@ -42,4 +36,25 @@ for data_type in ('precipitacion', 'temperatura', 'sensTermica', 'estadoCielo'):
     value_name = 'value' if not data_type == 'estadoCielo' else 'descripcion'
     filtered_data[int(i['periodo'])][data_type]  = i[value_name]
 
-print(filtered_data)
+msg = """
+Morning!
+
+Today, {date} sun rises at {sun_up} and sets at {sun_down}, on {city}, {state}.
+
+Detailed information:
+""".format(date=date, sun_up=sun_up, sun_down=sun_down, city=city, state=state)
+
+hour_line = "\t{time}h : {temp}º ({sens_termica}), {prob_lluvia}% lluvia y con el cielo {estado_cielo}\n"
+
+for i in filtered_data:
+  if len(filtered_data[i].keys()) == 0:
+    continue
+  msg = msg + hour_line.format(
+      time=i,
+      temp=filtered_data[i]['temperatura'],
+      sens_termica=filtered_data[i]['sensTermica'],
+      prob_lluvia=filtered_data[i]['precipitacion'],
+      estado_cielo=filtered_data[i]['estadoCielo']
+    )
+
+print(msg)
