@@ -14,6 +14,12 @@ def load_env_values():
       env[key_value[0]] = key_value[1]
   return env
 
+def format_rain(value):
+    if value == "Ip" or value == 0:
+        return ", {value}% lluvia".format(value=value)
+    else:
+        return ""
+
 env = load_env_values()
 
 aemet_url = 'https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/horaria/{location}'
@@ -57,7 +63,7 @@ That's the info I could get:
 
 """.format(date=date, sun_up=sun_up, sun_down=sun_down, city=city, state=state)
 
-hour_line = "\t{time}h : {temp}º ({sens_termica}), {prob_lluvia}% lluvia y con el cielo {estado_cielo}\n"
+hour_line = "\t{time}h : {temp}º ({sens_termica}) {lluvia} y con el cielo {estado_cielo}\n"
 
 for i in filtered_data:
   if len(filtered_data[i].keys()) == 0:
@@ -66,7 +72,7 @@ for i in filtered_data:
       time=i,
       temp=filtered_data[i]['temperatura'],
       sens_termica=filtered_data[i]['sensTermica'],
-      prob_lluvia=filtered_data[i]['precipitacion'],
+      lluvia=format_rain(filtered_data[i]['precipitacion']),
       estado_cielo=filtered_data[i]['estadoCielo']
     )
 
