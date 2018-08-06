@@ -15,7 +15,7 @@ def load_env_values():
   return env
 
 def format_rain(value):
-    if value == "Ip" or value == 0:
+    if value != "Ip" and value != 0:
         return ", {value}% lluvia".format(value=value)
     else:
         return ""
